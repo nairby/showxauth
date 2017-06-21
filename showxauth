@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+# Output xauth and display variable for use in other X sessions
+#
+# Run this before you 'su -' on a system then copy and paste
+# the output into the new shell (particularly useful for root
+# shells).
+#
+#  4Mar09 Bri   Version for AIX
+#
+# TODO: Make work properly for Solaris
+
+$display = $ENV{DISPLAY};
+
+if ($display eq "") {
+  exit (1);
+}
+
+$hn = `hostname`;
+chomp($hn);
+
+$display =~ /([^:]*):(\d+)\.(\d*)/;
+
+$lhn = $1;
+$scrn = $2;
+$subn = $3;
+
+#print "# Display variable and xauth data for use in another X session:\n";
+
+print "export DISPLAY=$display\n";
+
+$auth = `xauth list $hn/unix:$scrn`;
+chomp($auth);
+
+print "xauth add $auth\n";
